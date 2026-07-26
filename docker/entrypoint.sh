@@ -103,7 +103,7 @@ ensure_runtime_options() {
 	mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "
 		UPDATE wp_options SET option_value='usnews' WHERE option_name IN ('template','stylesheet');
 		UPDATE wp_options
-			SET option_value='a:2:{i:0;s:31:\"elementor/elementor.php\";i:1;s:19:\"akismet/akismet.php\";}'
+			SET option_value='a:2:{i:0;s:23:\"elementor/elementor.php\";i:1;s:19:\"akismet/akismet.php\";}'
 			WHERE option_name='active_plugins';
 		DELETE FROM wp_options WHERE option_name LIKE '%_transient_elementor%';
 		DELETE FROM wp_postmeta WHERE meta_key='_elementor_css';
