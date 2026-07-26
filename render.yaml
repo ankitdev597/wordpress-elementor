@@ -1,0 +1,69 @@
+# Render Blueprint — WordPress (Docker) + MySQL 8
+# Deploy: Render Dashboard → Blueprints → New Blueprint Instance → select this repo
+
+services:
+  - type: web
+    name: wordpress-elementor
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    disk:
+      name: wordpress-data
+      mountPath: /var/www/html
+      sizeGB: 10
+    envVars:
+      - key: WORDPRESS_DB_HOST
+        fromService:
+          name: mysql-wordpress
+          type: pserv
+          property: host
+      - key: WORDPRESS_DB_NAME
+        fromService:
+          name: mysql-wordpress
+          type: pserv
+          envVarKey: MYSQL_DATABASE
+      - key: WORDPRESS_DB_USER
+        fromService:
+          name: mysql-wordpress
+          type: pserv
+          envVarKey: MYSQL_USER
+      - key: WORDPRESS_DB_PASSWORD
+        fromService:
+          name: mysql-wordpress
+          type: pserv
+          envVarKey: MYSQL_PASSWORD
+      - key: WORDPRESS_TABLE_PREFIX
+        value: wp_
+      # Render terminates TLS at the proxy, so WordPress needs the forwarded scheme
+      # to build https URLs and avoid admin redirect loops.
+      - key: WORDPRESS_CONFIG_EXTRA
+        value: |
+          if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] ) {
+              $_SERVER['HTTPS'] = 'on';
+          }
+
+  - type: pserv
+    name: mysql-wordpress
+    runtime: docker
+    plan: starter
+    region: oregon
+    repo: https://github.com/render-examples/mysql.git
+    branch: master
+    autoDeployTrigger: "off"
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_DATABASE
+        value: usnews_wordpress
+      - key: MYSQL_USER
+        value: wordpress
+      - key: MYSQL_PASSWORD
+        generateValue: true
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true

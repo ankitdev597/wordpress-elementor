@@ -1,0 +1,28 @@
+/*
+Theme Name: U.S. News & World Report (Pixel Recreation)
+Theme URI: https://example.com/usnews
+Author: Principal WordPress Architect
+Author URI: https://example.com
+Description: Pixel-accurate WordPress recreation of the U.S. News & World Report homepage. Reproduces the original hand-written CSS Grid/Flexbox layout, CSS-only logo/badges, peek carousel, newsletter chips and responsive breakpoints exactly. No design changes.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.6
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: usnews
+Tags: news, magazine, grid-layout, custom-menu, sticky-header
+*/
+
+/*
+ * All visual styles live in the enqueued stylesheets (see functions.php):
+ *   assets/css/css2.css      -> local @font-face (Montserrat + Roboto)
+ *   assets/css/variables.css -> :root design tokens
+ *   assets/css/base.css      -> resets, .media frames, buttons, ad slots
+ *   assets/css/header.css    -> header, logo, nav, hero + gold badge
+ *   assets/css/sections.css  -> top news, health/education, photos, topics, wire, app promo
+ *   assets/css/footer.css    -> footer grid, brand, legal, social
+ *
+ * This file intentionally contains only the required theme header so that the
+ * original cascade/order is preserved 1:1. Do not add rules here.
+ */

@@ -1,0 +1,32 @@
+# Dependencies / OS
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Local PHP / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# WordPress local secrets & generated
+wp-config.php
+wp-content/debug.log
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup*/
+wp-content/uploads/cache/
+
+# Keep sample config for reference
+!wp-config-sample.php
+
+# Composer / Node (if added later)
+/vendor/
+/node_modules/
+
+# Env files
+.env
+.env.*
+!.env.example

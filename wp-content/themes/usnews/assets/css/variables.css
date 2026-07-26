@@ -1,0 +1,127 @@
+:root {
+  /* Official U.S. News design tokens */
+  --black-90: #1a1d26;
+  --black-80: #2c303c;
+  --black-70: #3f4451;
+  --gray-50: #515767;
+  --gray-30: #6f7480;
+  --gray-20: #9297a1;
+  --gray-15: #d3d7dc;
+  --gray-10: #e4e7eb;
+  --gray-05: #f4f7f9;
+  --white: #ffffff;
+  --white-00: #ffffff;
+
+  --red-90: #871a18;
+  --red-80: #a4211f;
+  --red-70: #b92523;
+  --red-50: #ce2927;
+  --red-30: #eb625f;
+  --red-20: #f58987;
+  --red-15: #fcbab9;
+  --red-10: #fdd5d4;
+  --red-05: #fff0ef;
+
+  --orange-90: #c94d00;
+  --orange-80: #dd7e00;
+  --orange-70: #e89a00;
+  --yellow-50: #f1b303;
+  --yellow-30: #f7ce27;
+  --yellow-20: #fbe25c;
+  --yellow-15: #fef2a0;
+  --yellow-10: #fef8c6;
+  --yellow-05: #fffdeb;
+
+  --green-90: #024024;
+  --green-80: #005e31;
+  --green-70: #06844b;
+  --green-50: #24bb80;
+  --green-30: #38d38d;
+  --green-20: #97efb2;
+  --green-15: #c4f9d6;
+  --green-10: #dbfbe8;
+  --green-05: #f0ffef;
+
+  --blue-90: #00206b;
+  --blue-80: #033493;
+  --blue-70: #064ab7;
+  --blue-50: #1263d3;
+  --blue-30: #358ce7;
+  --blue-20: #6ab4f4;
+  --blue-15: #b1dcfb;
+  --blue-10: #d6eefd;
+  --blue-05: #eff8ff;
+  --blue-01: #f8fcff;
+
+  --violet-90: #240c33;
+  --violet-80: #3d1455;
+  --violet-70: #512386;
+
+  --gold-70: #a06a00;
+  --gold-50: #d99a1e;
+  --gold-40: #f0b323;
+  --gold-20: #ffe9a8;
+  --hero-title: #ffffff;
+
+  /* Semantic mappings */
+  --color-text: var(--black-90);
+  --color-muted: var(--gray-50);
+  --color-bg: var(--white);
+  --color-bg-soft: var(--gray-05);
+  --color-header: var(--blue-80);
+  --color-hero: var(--blue-90);
+  --color-link: var(--blue-50);
+  --color-cta: var(--red-50);
+  --color-border: var(--gray-10);
+  --color-gold: var(--gold-40);
+  --footer-bg: var(--blue-90);
+  --hero-gradient: linear-gradient(119deg, #00206b 9%, #1263d3 114%);
+  --app-promo-gradient: linear-gradient(105deg, var(--blue-05) 0%, var(--blue-10) 45%, var(--blue-15) 100%);
+
+  /* Typography — local fonts from assets/fonts via css2.css */
+  --font-body: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Montserrat", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", Times, serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-hero: clamp(1.75rem, 4vw, 2.5rem);
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+  --fw-black: 700;
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.5;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Layout */
+  --container: 75rem;
+  --gutter: 1.25rem;
+  --header-h: 4rem;
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --col-gap: clamp(1.25rem, 2.4vw, 2rem);
+  --shadow: 0 0.125rem 0.5rem rgba(26, 29, 38, 0.12);
+  --shadow-lg: 0 0.5rem 1.5rem rgba(0, 32, 107, 0.28);
+
+  /* Media — 3:2 matches placehold 1200x800; 1200x1100 crops via object-fit */
+  --ratio-media: 3 / 2;
+  --img-placeholder: https://placehold.co/1200x800;
+}
