@@ -92,6 +92,24 @@ update_site_url() {
 		2>/dev/null || true
 }
 
+# Theme + Elementor must be active or the homepage body stays blank (header/footer only).
+ensure_runtime_options() {
+	parse_db
+	local count
+	count="$(table_count | tr -d '[:space:]')"
+	[ -n "$count" ] && [ "$count" != "0" ] || return 0
+
+	echo "Ensuring usnews theme + Elementor are active..."
+	mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "
+		UPDATE wp_options SET option_value='usnews' WHERE option_name IN ('template','stylesheet');
+		UPDATE wp_options
+			SET option_value='a:2:{i:0;s:31:\"elementor/elementor.php\";i:1;s:19:\"akismet/akismet.php\";}'
+			WHERE option_name='active_plugins';
+		DELETE FROM wp_options WHERE option_name LIKE '%_transient_elementor%';
+		DELETE FROM wp_postmeta WHERE meta_key='_elementor_css';
+	" 2>/dev/null || true
+}
+
 import_sql_if_needed() {
 	parse_db
 	local count
@@ -108,6 +126,7 @@ import_sql_if_needed() {
 		echo "Database already has ${count} tables — skipping import."
 	fi
 	update_site_url
+	ensure_runtime_options
 }
 
 bootstrap_wordpress_files() {

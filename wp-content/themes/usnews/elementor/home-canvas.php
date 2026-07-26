@@ -2,9 +2,9 @@
 /**
  * Page template: Elementor / blank canvas body.
  *
- * Header + footer stay native (pixel-accurate). The page body is
- * whatever Elementor (or the editor) outputs — use Custom HTML /
- * Shortcode widgets with [usnews_home] or section shortcodes.
+ * Header + footer stay native. Body prefers Elementor output; if empty,
+ * falls back to the full static homepage so production never shows a blank
+ * middle section.
  *
  * Template Name: Elementor Home Canvas
  *
@@ -13,13 +13,18 @@
 
 get_header();
 
-/*
- * Do NOT wrap in <main> — [usnews_home] / Custom HTML already includes
- * .decision-hero + <main id="main"> matching index.html.
- */
+$rendered = '';
 while ( have_posts() ) {
 	the_post();
+	ob_start();
 	the_content();
+	$rendered = trim( (string) ob_get_clean() );
+}
+
+if ( '' === $rendered ) {
+	get_template_part( 'template-parts/home', 'main' );
+} else {
+	echo $rendered; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the_content already filtered.
 }
 
 get_footer();
