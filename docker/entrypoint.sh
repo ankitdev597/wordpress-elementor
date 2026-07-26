@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# The official entrypoint only performs its setup when invoked as
-# docker-ensure-installed.sh or with an apache2*/php-fpm command, so call it
-# explicitly here to copy core into the Render disk and build wp-config.php
-# from the WORDPRESS_* environment variables.
-docker-ensure-installed.sh true
+# Sync bundled theme/plugins into the Render disk *before* the official
+# entrypoint runs. On first boot, docker-entrypoint.sh (with apache2*) will
+# still copy core from /usr/src/wordpress and build wp-config.php from
+# WORDPRESS_* env vars, while preserving existing wp-content paths.
+# On redeploy, core is already present so only these overlays refresh.
+#
+# Note: do not call docker-ensure-installed.sh — it is only available in
+# newer official images and is not present on wordpress:6.7-apache.
 
 SRC="/usr/src/wordpress/wp-content"
 DEST="/var/www/html/wp-content"
