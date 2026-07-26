@@ -39,6 +39,10 @@ services:
         value: wp_
       - key: WORDPRESS_SITE_URL
         value: https://wordpress-elementor.onrender.com
+      - key: WORDPRESS_ADMIN_USER
+        value: admin
+      - key: WORDPRESS_ADMIN_PASSWORD
+        value: Admin@12345
       - key: WORDPRESS_CONFIG_EXTRA
         value: |
           if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] ) {

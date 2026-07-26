@@ -110,6 +110,35 @@ ensure_runtime_options() {
 	" 2>/dev/null || true
 }
 
+# Reset wp admin password from WORDPRESS_ADMIN_PASSWORD (default Admin@12345).
+reset_admin_password() {
+	local pass="${WORDPRESS_ADMIN_PASSWORD:-Admin@12345}"
+	local user="${WORDPRESS_ADMIN_USER:-admin}"
+	[ -f /var/www/html/wp-load.php ] || return 0
+	parse_db
+	local count
+	count="$(table_count | tr -d '[:space:]')"
+	[ -n "$count" ] && [ "$count" != "0" ] || return 0
+
+	echo "Resetting WordPress admin password for user '${user}'..."
+	WORDPRESS_ADMIN_PASSWORD="$pass" WORDPRESS_ADMIN_USER="$user" php -d display_errors=0 -r '
+		$user_login = getenv("WORDPRESS_ADMIN_USER") ?: "admin";
+		$pass = getenv("WORDPRESS_ADMIN_PASSWORD") ?: "Admin@12345";
+		require "/var/www/html/wp-load.php";
+		$user = get_user_by("login", $user_login);
+		if (!$user) {
+			$user = get_user_by("id", 1);
+		}
+		if (!$user) {
+			fwrite(STDERR, "Admin user not found\n");
+			exit(1);
+		}
+		wp_set_password($pass, (int) $user->ID);
+		update_user_meta((int) $user->ID, "default_password_nag", false);
+		echo "Admin password updated for " . $user->user_login . PHP_EOL;
+	' || echo "WARNING: admin password reset failed — continuing boot." >&2
+}
+
 import_sql_if_needed() {
 	parse_db
 	local count
@@ -202,6 +231,7 @@ write_health_file
 
 if [ "$DB_READY" = "1" ]; then
 	import_sql_if_needed || echo "WARNING: database import/URL update failed — continuing boot." >&2
+	reset_admin_password || true
 fi
 
 configure_apache_port
