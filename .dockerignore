@@ -1,28 +1,6 @@
-# WordPress core ships with the base image
-wp-admin/
-wp-includes/
-wp-*.php
-!wp-content/**
-index.php
-xmlrpc.php
-license.txt
-readme.html
-.htaccess
-
-# Bundled themes provided by the base image
-wp-content/themes/twentytwentythree/
-wp-content/themes/twentytwentyfour/
-wp-content/themes/twentytwentyfive/
-
-wp-content/debug.log
-wp-content/cache/
-wp-content/upgrade/
-
-# Imported manually, not needed inside the image
-database/
-
-.git/
+.git
 .gitignore
-.gitattributes
-README.md
-render.yaml
+*.md
+.cursor
+wp-config.php
+wp-config-local.php

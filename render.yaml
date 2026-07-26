@@ -1,5 +1,6 @@
-# Render Blueprint — WordPress (Docker) + MySQL 8
-# Deploy: Render Dashboard → Blueprints → New Blueprint Instance → select this repo
+# Render Blueprint — push to GitHub → auto deploy WordPress + MySQL
+# Dashboard: Blueprints → New Blueprint Instance → select this repo
+# Do NOT point DB at Railway/external hosts; MySQL is created and linked here.
 
 services:
   - type: web
@@ -16,11 +17,16 @@ services:
       mountPath: /var/www/html
       sizeGB: 10
     envVars:
+      # Render routes public HTTP to this port; entrypoint configures Apache for it
+      - key: PORT
+        value: "10000"
       - key: WORDPRESS_DB_HOST
         fromService:
           name: mysql-wordpress
           type: pserv
           property: host
+      - key: WORDPRESS_DB_PORT
+        value: "3306"
       - key: WORDPRESS_DB_NAME
         fromService:
           name: mysql-wordpress
@@ -38,13 +44,16 @@ services:
           envVarKey: MYSQL_PASSWORD
       - key: WORDPRESS_TABLE_PREFIX
         value: wp_
-      # Render terminates TLS at the proxy, so WordPress needs the forwarded scheme
-      # to build https URLs and avoid admin redirect loops.
+      # Fixed production URL (also used after SQL import for siteurl/home)
+      - key: WORDPRESS_SITE_URL
+        value: https://wordpress-elementor.onrender.com
       - key: WORDPRESS_CONFIG_EXTRA
         value: |
           if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO'] ) {
               $_SERVER['HTTPS'] = 'on';
           }
+          define( 'WP_HOME', 'https://wordpress-elementor.onrender.com' );
+          define( 'WP_SITEURL', 'https://wordpress-elementor.onrender.com' );
 
   - type: pserv
     name: mysql-wordpress
