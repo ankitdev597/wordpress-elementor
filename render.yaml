@@ -14,7 +14,8 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     autoDeployTrigger: commit
-    healthCheckPath: /
+    # Static file, so a WordPress canonical redirect can never fail the check
+    healthCheckPath: /render-health.txt
     disk:
       name: wordpress-data
       mountPath: /var/www/html

@@ -23,7 +23,8 @@ RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf \
 	&& chmod +x /usr/local/bin/entrypoint.sh \
 	&& chown -R www-data:www-data /usr/src/wordpress/wp-content
 
-ENV PORT=80
+# Render's default web service port; docker-compose overrides this with 80
+ENV PORT=10000
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]

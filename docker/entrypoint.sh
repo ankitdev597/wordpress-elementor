@@ -54,7 +54,7 @@ wait_for_db() {
 	parse_db
 	echo "Waiting for MySQL at ${DB_HOST}:${DB_PORT} (database=${DB_NAME})..."
 	local i=0
-	local max="${WORDPRESS_DB_WAIT_SECONDS:-180}"
+	local max="${WORDPRESS_DB_WAIT_SECONDS:-60}"
 	while [ "$i" -lt "$max" ]; do
 		if mysqladmin ping \
 			-h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" \
@@ -148,28 +148,41 @@ ensure_wp_config() {
 }
 
 configure_apache_port() {
-	echo "Configuring Apache to Listen ${PORT} on 0.0.0.0"
+	echo "Configuring Apache to listen on port ${PORT}"
 	sed -ri "s/^Listen[[:space:]].*/Listen ${PORT}/" /etc/apache2/ports.conf
-	# Ensure IPv4 bind (Render port scan looks for 0.0.0.0)
-	if ! grep -qE "^Listen ${PORT}$" /etc/apache2/ports.conf; then
-		echo "Listen ${PORT}" >> /etc/apache2/ports.conf
+	# Port 80 stays open so Render's port scan succeeds whichever port it probes
+	if [ "$PORT" != "80" ]; then
+		echo "Listen 80" >> /etc/apache2/ports.conf
 	fi
+	# "*" (no port) makes the vhost answer on every listening port
 	for conf in /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-enabled/000-default.conf; do
 		[ -f "$conf" ] || continue
-		sed -ri "s/<VirtualHost \*:[0-9]+>/<VirtualHost *:${PORT}>/g" "$conf"
+		sed -ri "s/<VirtualHost [^>]*>/<VirtualHost *>/g" "$conf"
 	done
 }
 
+# Static file so platform health checks never hit WordPress canonical redirects
+write_health_file() {
+	printf 'ok\n' > /var/www/html/render-health.txt
+	chown www-data:www-data /var/www/html/render-health.txt 2>/dev/null || true
+}
+
+DB_READY=0
 if [ -n "${WORDPRESS_DB_HOST:-}" ]; then
 	parse_db
-	wait_for_db
+	# Never abort the boot on DB problems: Apache must come up so the platform
+	# sees an open port and the browser shows a WordPress error, not a 502.
+	if wait_for_db; then
+		DB_READY=1
+	fi
 fi
 
 bootstrap_wordpress_files
 ensure_wp_config
+write_health_file
 
-if [ -n "${WORDPRESS_DB_HOST:-}" ]; then
-	import_sql_if_needed
+if [ "$DB_READY" = "1" ]; then
+	import_sql_if_needed || echo "WARNING: database import/URL update failed — continuing boot." >&2
 fi
 
 configure_apache_port
