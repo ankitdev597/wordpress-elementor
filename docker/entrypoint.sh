@@ -45,6 +45,9 @@ parse_db() {
 	DB_USER="${WORDPRESS_DB_USER:-wordpress}"
 	DB_PASSWORD="${WORDPRESS_DB_PASSWORD:-}"
 	DB_NAME="${WORDPRESS_DB_NAME:-wordpress}"
+	# WordPress PHP only reads DB_HOST (no separate port) — always export host:port
+	export WORDPRESS_DB_HOST="${DB_HOST}:${DB_PORT}"
+	export WORDPRESS_DB_PORT="$DB_PORT"
 }
 
 wait_for_db() {
@@ -158,6 +161,7 @@ configure_apache_port() {
 }
 
 if [ -n "${WORDPRESS_DB_HOST:-}" ]; then
+	parse_db
 	wait_for_db
 fi
 
@@ -169,5 +173,10 @@ if [ -n "${WORDPRESS_DB_HOST:-}" ]; then
 fi
 
 configure_apache_port
+
+# Re-export normalized host:port so apache/php children inherit it
+if [ -n "${WORDPRESS_DB_HOST:-}" ]; then
+	parse_db
+fi
 
 exec docker-entrypoint.sh "$@"
